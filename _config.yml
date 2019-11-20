@@ -1,7 +1,7 @@
 # Site settings
 title: Wenqian Blog
 SEOTitle: 文谦的博客 | Wenqian Blog
-header-img: img/home-bg.jpg
+header-img: img/automl.jpeg
 email: zhwq_official@163.com
 description: "写点自己学到的东西"
 keyword: "机器学习, Machine Learning, Spark"
@@ -13,7 +13,7 @@ future: true
 
 # SNS settings
 RSS: false
-weibo_username:     赵小谦Peter
+weibo_username:     2381346515
 zhihu_username:     赵小谦Peter
 github_username:    wenqianzhao
 #twitter_username:   wenqian.zhao
@@ -79,7 +79,7 @@ netease_comment: false
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "Love csy"
-sidebar-avatar: /img/avatar-hux-ny.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: /img/dabao.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
