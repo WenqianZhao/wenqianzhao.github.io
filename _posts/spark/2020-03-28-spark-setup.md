@@ -23,7 +23,7 @@ tags:
 2. 安装JDK
 3. 在IDEA安装Scala插件并下载安装Scala
 4. 新建一个Project并依赖Spark
-5. 写一个简单的小程序并在本地运行
+5. 写一个简单的小程序并在运行
 我会尽量详细地介绍上述几步，帮助大家更快地完成环境的搭建。
 
 OK, let's GO!
@@ -86,9 +86,17 @@ OK, let's GO!
 
 之后点击右下角的OK即可。
 
+### 安装Maven
+安装Maven非常方便，只要在官方网站下载好压缩包（我下载的是`apache-maven-3.6.3-bin.tar.gz`），然后按照官方[安装文档](https://maven.apache.org/install.html)的指示来安装即可。如果不是很清楚其中细节的，可以参考这篇[博文](https://blog.csdn.net/dearKundy/article/details/80291275)的安装部分。
+
+> 上面说的博文中有一处错误，那就是如果要使得配置文件生效需要输入：
+`source ~/.bash_profile`，文件的位置和之前vim时是一致的。
+
+安装完成后可以通过`mvn -v`语句来测试是否生效。
+
 ### 添加Spark依赖
 打开之前说的pom文件，你应该可以看到类似于下面这样的代码：
-```pom
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -102,16 +110,113 @@ OK, let's GO!
 </project>
 ```
 
-首先对依赖的版本进行设置，采用pom里面的**properties tag**，其作用是声明依赖的版本信息，这样在之后的依赖中可以直接引用，将来改起来也比较好改：
+首先对依赖的版本进行设置，采用pom里面的**properties tag**，其作用是声明依赖的版本信息，这样在之后的依赖中可以直接引用，将来改起来也比较好改（版本号可以根据自己的喜好修改）：
 ```
 <properties>
     <java.version>1.8</java.version>
     <scala.version>2.11.12</scala.version>
     <scala.binary.version>2.11</scala.binary.version>
+    <scalatest.version>3.0.5</scalatest.version>
     <spark.version>2.4.5</spark.version>
 </properties>
 ```
 
+接下来设置Maven仓库，我们这里只设置中心仓库：
+```
+<repositories>
+    <repository>
+        <id>central</id>
+        <!-- This should be at top, it makes maven try the central repo first and then others and hence faster dep resolution -->
+        <name>Maven Repository</name>
+        <url>https://repo1.maven.org/maven2</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </repository>
+</repositories>
+```
+
+`<id>central</id>`表示此仓库是中心仓库，关于仓库的概念和知识可以参考[这篇文章](https://www.cnblogs.com/7788IT/p/11625917.html)。由于官方仓库的服务器并非架设在中国，因此为了速度考虑，我们可以配置仓库镜像。这里我们添加阿里云提供的镜像。
+
+通过`mvn -v`中打印的内容找到Maven Home，之后在Maven Home的conf文件夹中找到settings.xml。对其进行修改，添加下面的代码（在注释mirrors的部分）：
+```
+   <!-- mirrors
+   | This is a list of mirrors to be used in downloading artifacts from remote repositories.
+   |
+   | It works like this: a POM may declare a repository to use in resolving certain artifacts.
+   | However, this repository may have problems with heavy traffic at times, so people have mirrored
+   | it to several places.
+   |
+   | That repository definition will have a unique id, so we can create a mirror reference for that
+   | repository, to be used as an alternate download site. The mirror site will be the preferred
+   | server for that repository.
+   |-->
+  <mirrors>
+    <!-- mirror
+     | Specifies a repository mirror site to use instead of a given repository. The repository that
+     | this mirror serves has an ID that matches the mirrorOf element of this mirror. IDs are used
+     | for inheritance and direct lookup purposes, and must be unique across the set of mirrors.
+     |
+    <mirror>
+      <id>mirrorId</id>
+      <mirrorOf>repositoryId</mirrorOf>
+      <name>Human Readable Name for this Mirror.</name>
+      <url>http://my.repository.com/repo/path</url>
+    </mirror>
+     -->
+    <mirror>
+        <id>alimaven</id>
+        <name>aliyun maven</name>
+        <!-- https://maven.aliyun.com/repository/public/ -->
+        <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        <mirrorOf>central</mirrorOf>
+    </mirror>
+  </mirrors>
+
+```
+
+下面添加Spark依赖。这里用到的是Maven中的**dependency** tag。和dependency相关还有另一个tag，叫dependencyManagement。两者的区别可以参考[这篇文章](https://www.cnblogs.com/feibazhf/p/7886617.html)。
+
+下面是我们要添加的代码：
+```
+<dependencies>
+    <dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-core_${scala.binary.version}</artifactId>
+        <version>${spark.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-sql_${scala.binary.version}</artifactId>
+        <version>${spark.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-mllib_${scala.binary.version}</artifactId>
+        <version>${spark.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.scalatest</groupId>
+        <artifactId>scalatest_${scala.binary.version}</artifactId>
+        <version>${scalatest.version}</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-library</artifactId>
+        <version>${scala.version}</version>
+    </dependency>
+</dependencies>
+```
+
+我们这里主要添加三个和spark相关的包以及两个和scala相关的包。如果想要添加其他的包，可以自行修改。
+
+做完这些我们终于要进入到最后一步啦！
+
+## 写一个简单的小程序并在运行
 
 
 To be continued...
