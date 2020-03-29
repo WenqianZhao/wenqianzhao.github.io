@@ -39,7 +39,7 @@ OK, let's GO!
 
 ## 安装JDK
 进入Oracle的[Java SE Downloads页面](https://www.oracle.com/java/technologies/javase-downloads.html)，选择合适的Java SE版本。我们这里选择*Java SE 8u241*:
-![img](../../img/in-post/spark/java-se-8u241.png)
+![img](/img/in-post/spark/java-se-8u241.png)
 
 点击页面中的**JDK Download**，进入下载页面。
 
@@ -49,17 +49,17 @@ OK, let's GO!
 
 ## 在IDEA中安装Scala插件并下载安装Scala
 打开IDEA的Preference，选择Plugin，在搜索框中输入scala。如果未搜到任何内容，那说明还没有安装插件，这时需要点击下图中红框圈出来的**Browse repositories**进行搜索，同样还是输入scala：
-![img](../../img/in-post/spark/plugins.png)
+![img](/img/in-post/spark/plugins.png)
 
 选择下图中的scala插件：
-![img](../../img/in-post/spark/scala-plugin.png)
+![img](/img/in-post/spark/scala-plugin.png)
 
 点击install进行安装。之后等待其安装完成即可。
 
 下面就是安装Scala了。我们可以到Scala的[官网](https://www.scala-lang.org/download/)上下载并手动安装scala，具体的操作可以参考这篇[文章](https://www.jianshu.com/p/d7c94372020c)。Scala的版本选择2.11.12，因为Spark是用Scala 2.11编译的。
 
 安装完scala之后可以通过在命令行输入scala进行验证：
-![img](../../img/in-post/spark/scala-validate.png)
+![img](/img/in-post/spark/scala-validate.png)
 
 ## 新建一个Project并依赖Spark
 ### 新建项目
@@ -76,13 +76,13 @@ OK, let's GO!
 因为项目中需要进行scala代码的编写，因此这里需要给项目添加Scala SDK的依赖。
 
 点击File - Project Structure - Libraries，之后选择点击左上角的"+"号添加**Scala SDK**：
-![img](../../img/in-post/spark/add-scala-sdk.png)
+![img](/img/in-post/spark/add-scala-sdk.png)
 
 这里有两种方式，一种是点击**download**，选择某个版本的sdk（例如这里的2.12.4）进行下载：
-![img](../../img/in-post/spark/scala-sdk-download.png)
+![img](/img/in-post/spark/scala-sdk-download.png)
 
 不过这种方法下载的速度非常慢，并且因为我们之前已经安装好了Scala，所以再次下载就显得没必要了。那么可以怎么做呢？其实也很简单，就是在上面那一步，不再点击**download**，而是点击**browse**，并选择自己下载的安装包解压的位置（也就是scala-2.11.12那个文件夹）。点击OK后可以看到：
-![img](../../img/in-post/spark/scala-sdk-browse.png)
+![img](/img/in-post/spark/scala-sdk-browse.png)
 
 之后点击右下角的OK即可。
 
