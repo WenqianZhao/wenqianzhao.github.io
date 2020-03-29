@@ -23,7 +23,7 @@ tags:
 2. 安装JDK
 3. 在IDEA安装Scala插件并下载安装Scala
 4. 新建一个Project并依赖Spark
-5. 写一个简单的小程序并在运行
+5. 写一个简单的小程序并运行
 我会尽量详细地介绍上述几步，帮助大家更快地完成环境的搭建。
 
 OK, let's GO!
@@ -39,7 +39,7 @@ OK, let's GO!
 
 ## 安装JDK
 进入Oracle的[Java SE Downloads页面](https://www.oracle.com/java/technologies/javase-downloads.html)，选择合适的Java SE版本。我们这里选择*Java SE 8u241*:
-![img](/img/in-post/spark/java-se-8u241.png)
+![img](/img/in-post/spark/0328-spark-setup/java-se-8u241.png)
 
 点击页面中的**JDK Download**，进入下载页面。
 
@@ -49,22 +49,22 @@ OK, let's GO!
 
 ## 在IDEA中安装Scala插件并下载安装Scala
 打开IDEA的Preference，选择Plugin，在搜索框中输入scala。如果未搜到任何内容，那说明还没有安装插件，这时需要点击下图中红框圈出来的**Browse repositories**进行搜索，同样还是输入scala：
-![img](/img/in-post/spark/plugins.png)
+![img](/img/in-post/spark/0328-spark-setup/plugins.png)
 
 选择下图中的scala插件：
-![img](/img/in-post/spark/scala-plugin.png)
+![img](/img/in-post/spark/0328-spark-setup/scala-plugin.png)
 
 点击install进行安装。之后等待其安装完成即可。
 
 下面就是安装Scala了。我们可以到Scala的[官网](https://www.scala-lang.org/download/)上下载并手动安装scala，具体的操作可以参考这篇[文章](https://www.jianshu.com/p/d7c94372020c)。Scala的版本选择2.11.12，因为Spark是用Scala 2.11编译的。
 
 安装完scala之后可以通过在命令行输入scala进行验证：
-![img](/img/in-post/spark/scala-validate.png)
+![img](/img/in-post/spark/0328-spark-setup/scala-validate.png)
 
 ## 新建一个Project并依赖Spark
 ### 新建项目
 打开IDEA，选择新建Project，**Project SDK**部分应该会自动加载之前我们下载并安装好的Java SDK：
-![img](/img/in-post/spark/maven-proj.png)
+![img](/img/in-post/spark/0328-spark-setup/maven-proj.png)
 
 这里选择使用Maven构建项目。点击Next之后输入GroupId和ArtifactId。简单来说GroupId标识了你的组织和总的项目名称，ArtifactId标识了当前项目或子模块的名称。具体的介绍可以看一下[这篇博客](https://blog.csdn.net/qq_19934363/article/details/97612169)。
 
@@ -76,13 +76,13 @@ OK, let's GO!
 因为项目中需要进行scala代码的编写，因此这里需要给项目添加Scala SDK的依赖。
 
 点击File - Project Structure - Libraries，之后选择点击左上角的"+"号添加**Scala SDK**：
-![img](/img/in-post/spark/add-scala-sdk.png)
+![img](/img/in-post/spark/0328-spark-setup/add-scala-sdk.png)
 
 这里有两种方式，一种是点击**download**，选择某个版本的sdk（例如这里的2.12.4）进行下载：
-![img](/img/in-post/spark/scala-sdk-download.png)
+![img](/img/in-post/spark/0328-spark-setup/scala-sdk-download.png)
 
 不过这种方法下载的速度非常慢，并且因为我们之前已经安装好了Scala，所以再次下载就显得没必要了。那么可以怎么做呢？其实也很简单，就是在上面那一步，不再点击**download**，而是点击**browse**，并选择自己下载的安装包解压的位置（也就是scala-2.11.12那个文件夹）。点击OK后可以看到：
-![img](/img/in-post/spark/scala-sdk-browse.png)
+![img](/img/in-post/spark/0328-spark-setup/scala-sdk-browse.png)
 
 之后点击右下角的OK即可。
 
@@ -214,9 +214,41 @@ OK, let's GO!
 
 我们这里主要添加三个和spark相关的包以及两个和scala相关的包。如果想要添加其他的包，可以自行修改。
 
-做完这些我们终于要进入到最后一步啦！
+做完这些我们终于要进入到最后一步啦！（build的部分这里就不写了，有兴趣的小伙伴可以自行搜索）
 
-## 写一个简单的小程序并在运行
+## 写一个简单的小程序并运行
+小程序的代码如下：
+```scala
+package org.wenqianzhao.learnspark
 
+import org.apache.spark.sql.SparkSession
 
-To be continued...
+object SparkTest {
+  def main(args: Array[String]): Unit = {
+    val spark = SparkSession.builder()
+      .appName("SparkTest")
+      .master("local")
+      .getOrCreate()
+    val sc = spark.sparkContext
+
+    val result = sc.parallelize(1 to 10)
+      .repartition(2)
+      .collect()
+
+    result.foreach(println(_))
+
+    spark.stop()
+  }
+}
+```
+
+代码很简单，做的事情其实就是生成一个1到10的序列，然后放入两个partition中，之后在collect到driver上，并打印出来。为了让程序能再IDEA中运行，我们需要创建一个Application。点击IDEA上方工具栏右侧的`Edit Configurations`：
+![img](/img/in-post/spark/0328-spark-setup/edit-configurations.png)
+
+左上角点击加号并选择Application。之后填写相关配置，主要是名称、`Main Class`以及`Use classpath of module`要写对：
+![img](/img/in-post/spark/0328-spark-setup/configurations.png)
+
+之后点击刚刚建好的配置边上的绿色三角形来运行。运行的结果如下：
+![img](/img/in-post/spark/0328-spark-setup/result.png)
+
+至此大功告成！观察仔细的朋友可能发现了上面那个例子打印的数字先是递增的单数，后是递增的双数，大家可以思考一下这是为什么：）
