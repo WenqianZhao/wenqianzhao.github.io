@@ -64,7 +64,7 @@ OK, let's GO!
 ## 新建一个Project并依赖Spark
 ### 新建项目
 打开IDEA，选择新建Project，**Project SDK**部分应该会自动加载之前我们下载并安装好的Java SDK：
-<div align=center><img src="../../img/in-post/spark/maven-proj.png" width=650 height=450></div>
+![img](/img/in-post/spark/maven-proj.png)
 
 这里选择使用Maven构建项目。点击Next之后输入GroupId和ArtifactId。简单来说GroupId标识了你的组织和总的项目名称，ArtifactId标识了当前项目或子模块的名称。具体的介绍可以看一下[这篇博客](https://blog.csdn.net/qq_19934363/article/details/97612169)。
 
