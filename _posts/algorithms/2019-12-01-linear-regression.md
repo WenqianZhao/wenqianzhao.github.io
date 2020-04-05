@@ -22,7 +22,7 @@ $$
 ## 平方损失函数的概率解释
 为何使用平方损失函数可以从下面这个概率角度来理解。假定目标值$t$可以通过一个确定性方程$\mathrm{y}(\boldsymbol{\mathrm{x}},\boldsymbol{\mathrm{w}})$以及一个高斯噪声（一般都会假定观测噪声是高斯）得到：
 
-<div align=center><img src="../../img/in-post/linear-regression/pic1.png" width=200 height=40></div>
+![img](/img/in-post/linear-regression/pic1.png)
 
 假设噪声的
 
