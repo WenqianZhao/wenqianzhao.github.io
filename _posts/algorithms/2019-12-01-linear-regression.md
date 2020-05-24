@@ -13,9 +13,7 @@ tags:
 ## 线性回归的形式
 线性回归即由一个线性方程来拟合目标值。其形式如下：
 
-$$
-\mathrm{y}(\boldsymbol{\mathrm{x}},\boldsymbol{\mathrm{w}})=w_0 + w_1x_1 + ... + w_Dx_D
-$$
+$$\mathrm{y}(\boldsymbol{\mathrm{x}},\boldsymbol{\mathrm{w}})=w_0 + w_1x_1 + ... + w_Dx_D$$
 
 其中
 $\boldsymbol{\mathrm{x}}=(x_1,...,x_D)^T$。
