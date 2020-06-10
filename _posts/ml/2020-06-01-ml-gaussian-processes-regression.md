@@ -18,14 +18,18 @@ tags:
 
 ### 权重空间视角
 在将高斯过程回归之前，我们先看看标准的线性回归是什么样的。考虑一个带有高斯噪声的标准线性回归模型：
-$$ f(x) = \textbf{x}^T\textbf{w},\space\space\space\space y = f(\textbf{x})+\epsilon , $$
+
+$$f\(x\) = \textbf\{x\}^T\textbf\{w\},\space\space\space\space y = f(\textbf\{x\})+\epsilon\space,$$
+
 其中 $\textbf{x}$ 是输入向量， $\textbf{w}$ 是线性模型的权重，$f$ 是模型方程，而 $y$ 是观察到的标签。 $\epsilon$ 是一个均值为0且方差为 $\sigma^{2}_{n}$ 的随机变量：
-$$ \epsilon ~ \mathcal{N}\(0, \sigma^{2}_{n}\) $$
+
+$$\epsilon ~ \mathcal{N}\(0, \sigma^{2}_{n}\)$$
+
 标签带有高斯噪声是线性回归中的一个通常的假设，由此我们可以得到训练集上的似然函数为：
 
 ![img](/img/in-post/ml/gp/gp2-1.png)
 
-这里很巧妙的利用了欧式距离（本质上是平方和）以及指数函数指数部分相乘等于相加的关系，将似然函数转化为了关于矩阵的一个高斯分布。这时如果我们假设 $\textbf{w}$ 的分布为 $\textbf{w} ~ \mathcal{N(\textbf{0}, \sigma_p)}$ ，那么根据贝叶斯定理，就可以得到关于 $\textbf{w}$的后验概率为：
+这里很巧妙的利用了欧式距离（本质上是平方和）以及指数函数指数部分相乘等于相加的关系，将似然函数转化为了关于矩阵的一个高斯分布。这时如果我们假设 $\textbf{w}$ 的分布为 $\textbf{w} \backsim \mathcal{N\(\textbf{0}, \Sigma_p\)}$ ，那么根据贝叶斯定理，就可以得到关于 $\textbf{w}$的后验概率为：
 
 ![img](/img/in-post/ml/gp/gp2-2.png)
 
@@ -33,7 +37,7 @@ $$ \epsilon ~ \mathcal{N}\(0, \sigma^{2}_{n}\) $$
 
 ![img](/img/in-post/ml/gp/gp2-3.png)
 
-如果令 $\mathnormal{A} = \sigma^{-2}_{n}\mathnormal{X}\mathnormal{X}_{T} + \Sigma^{-1}_{p}$ ，那么我们可以进一步地得到 $\textbf{w}$ 的后验概率为：
+如果令 $\mathnormal\{A\} = \sigma^\{-2\}_\{n\}\mathnormal\{X\}\mathnormal\{X\}_\{T\} + \Sigma^\{-1\}_\{p\}$ ，那么我们可以进一步地得到 $\textbf{w}$ 的后验概率为：
 
 ![img](/img/in-post/ml/gp/gp2-4.png)
 
@@ -46,7 +50,7 @@ $$ \epsilon ~ \mathcal{N}\(0, \sigma^{2}_{n}\) $$
 
 > 注1：英文原文为“A Gaussian process is a collection of random variables, any finite number of which have a joint Gaussian distribution”。
 
-一个高斯分布完全由其均值方程和协方差方程决定。我们定义一个真实过程 $\mathnormal{f}(\textbf{x})$ 的均值方程和协方差方程为：
+一个高斯分布完全由其均值方程和协方差方程决定。我们定义一个真实过程 $\mathnormal\{f\}\(\textbf{x}\)$ 的均值方程和协方差方程为：
 
 ![img](/img/in-post/ml/gp/gp2-6.png)
 
