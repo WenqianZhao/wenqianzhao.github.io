@@ -5,7 +5,7 @@ header-img: img/back.jpg
 email: zhwq_official@163.com
 description: "写点自己学到的东西"
 keyword: "机器学习, Machine Learning, Spark"
-url: "https://wenqianzhao.github.io/"              # your host, for absolute URL
+url: "http://wenqianzhao.cn/"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
 # Publish posts or collection documents with a future date.
