@@ -23,7 +23,7 @@ tags:
 
 最终的loss可以看做是基于soft target和hard target进行训练的loss的加权和：
 
-$$ L = \alpha\*L_{soft} + (1 - \alpha)\*L_{hard} $$
+$ \centerline{L = \alpha\*L_{soft} + (1 - \alpha)\*L_{hard}} $
 
 # 知识蒸馏与联邦学习
 在知识蒸馏中，我们也会把复杂模型称为**teacher model**，把简单模型称为**student model**，因为蒸馏的过程就类似于学生向老师讨教的过程。那么在联邦学习中teacher model和student model又分别是什么呢？这里我们以下面两篇文章为例介绍一下两种不同的思路：
