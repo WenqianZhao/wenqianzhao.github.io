@@ -24,9 +24,7 @@ tags:
 最终的loss可以看做是基于soft target和hard target进行训练的loss的加权和：
 
 $$
-\begin{center}
 L = \alpha\*L_{soft} + (1 - \alpha)\*L_{hard}
-\end{center}
 $$
 
 # 知识蒸馏与联邦学习
