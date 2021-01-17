@@ -39,6 +39,8 @@ Attention就是大名鼎鼎的注意力机制。注意力机制和我们平时�
 
 ![img](/img/in-post/ml/transformer/transformer.png)
 
+## Encoder部分
+
 可以看到，Transformer也是分为Encoder和Decoder两部分，其中Encoder是先将输入经过embedding，得到embedding向量，之后加入**位置编码信息（Positional Encoding）**传入N个相同的层（layer）。每个层又可以分为两个子层，其中第一个是**多头注意力（Multi-Head Attention）**，而第二个则是一个简单的**逐位置的前馈神经网络（Position-wise Feed-forward network）**。每层之后的Add&Norm指的是一个残差连接+LN（Layer Normalization）。因此每一层的输出都可以表示为：LayerNorm(x + Sublayer(x))，其中Sublayer(x)就是上面说的多头注意力或者前馈网络的结果。
 
 > LN是BN的一个改进或者说变种。**BN是对不同样本的同一特征（通道）做标准化，而LN则是对同一样本下的不同特征（通道）做标准化（这里的“特征”是指某个隐藏层的节点数量）**。在RNN中通常使用LN而不是BN，这是因为RNN是一种动态网络，其展开后的隐层数量会随着时间片数量的增加而增加，因此一个batch内的样本很可能拥有不同的长度，由此得到的统计量也是不充分的。更多LN相关知识可参考[https://zhuanlan.zhihu.com/p/54530247](https://zhuanlan.zhihu.com/p/54530247)。
@@ -47,7 +49,7 @@ Attention就是大名鼎鼎的注意力机制。注意力机制和我们平时�
 
 这时有人可能会问了：**多头注意力是什么？逐位置的前馈神经网络又是什么？位置编码是干什么用的？**
 
-## 多头注意力
+### 多头注意力
 在介绍自注意力时我们提到可以通过三个不同的线性变换，得到Q、K、V矩阵。假设我们将这三个线性变换看做是一组，那么我们其实可以多训练几组来增强自注意力模型的学习能力（多组不同的线性变换即所谓的多头）。多头注意力的结构如下所示：
 ![img](/img/in-post/ml/transformer/multi-head.png)
 
@@ -55,13 +57,13 @@ Attention就是大名鼎鼎的注意力机制。注意力机制和我们平时�
 ![img](/img/in-post/ml/transformer/formula2.png)
 其中$ W^{Q}_{i}\in \mathbb{d_model\times{d_k}}$，也就是我们前文提到的Wq，Wk和Wv也是类似，而$ W^{O}\in \mathbb{hd_v\times{d_model}} $。为了加快计算速度，可以并行计算每个head，并且减少每个head的维度。在论文中，作者设置h=8，并且$ d_k=dv=d_{model}/h=64 $。
 
-## 逐位置的前馈神经网络(FFN)
+### 逐位置的前馈神经网络(FFN)
 FFN其实就是一个简单的二层网络，其中第一层的激活函数为ReLU。对于输入序列中每个位置上的向量x：
 ![img](/img/in-post/ml/transformer/ffn.png)
 
 在同一层上（这里指的是Encoder或Decoder内的层），每个位置上的向量x所对应的参数W1、W2、b1、b2都是相同的，但是层与层之间的参数时不同的。FFN的作用应该就是提供更多的非线性和学习能力。
 
-## 位置编码
+### 位置编码
 由于Transformer的结构会丢失输入序列的顺序信息，因此这里采用位置编码的方式将序列中每个token的相对或绝对位置信息纳入整个训练过程。位置编码是加在所有encoder和decoder层的一开始，并且被加到输入和输出向量中（通过下图回顾一下transformer的架构）。
 ![img](/img/in-post/ml/transformer/transformer.png)
 
@@ -87,7 +89,8 @@ FFN其实就是一个简单的二层网络，其中第一层的激活函数为Re
 
 基于以上几点，作者采用三角函数形式的位置编码。关于位置编码更多的解读可以参考[https://www.zhihu.com/question/347678607](https://www.zhihu.com/question/347678607)。
 
-## Encoder部分总结
+### Encoder部分总结
+
 简单总结一下Encoder部分，主要分为3个部分：
 1. 输入Embedding
 2. 位置编码
@@ -97,6 +100,37 @@ FFN其实就是一个简单的二层网络，其中第一层的激活函数为Re
 1. 多头注意力+残差&Norm： $Z^{(l)}=Norm(H^{(l-1)} + Multi-Head(H^{(l-1)}))$。
 2. FFN+残差&Norm：$H^{(l)}=Norm(Z^{(l)} + FFN(Z^{(l)})$。
 
+## Decoder部分
+
 聊完了Encoder部分我们再来看看Decoder部分。相比于Encoder，Decoder内的第一个多头注意力多了一个前缀 —— Masked，这个Mask是指什么呢？
 
+### Masked Multi-Head Attention
+
 我们知道多头注意力是一种自注意力机制，因此其Q、K、V的源头都是输入序列自身。在Decoder部分，输入是我们的“标签”，即最终想要预测的内容（例如英翻中里面的中文翻译结果），那么为了防止信息泄露，我们在预测第k个词的时候肯定不能事先知道第k个词乃至其后面的内容，而只能知道我们已经预测过的前k-1个词。因此在运用多头注意力时需要把第k个词之后的内容进行隐藏，即所谓的mask。作者的做法是将需要被mask的向量设置为负无穷，那么经过点积和softmax之后其结果趋近于0，对最终结果也几乎没有任何影响。
+
+### 承接Encoder输出的多头注意力模型
+
+Masked多头注意力的输出会接入另一个多头注意力模型，但不同于Encoder内的是，它不再是一个自注意力模型，因为其Q、K、V的来源不再相同。Q来自于Masked多头注意力的输出，K、V则是由Encoder的输出经过线性变换得到。它的作用就是让Encoder的编码结果通过Attention的方式传递给Decoder，**其实跟原始的带Attention的Encoder-Decoder模型的结构是一样的**。
+
+再之后就是和Encoder中一样的FFN + Add&Norm。在N层Decoder层之后，结果会进行一个线性变换，并且通过Softmax转化成不同类别的概率值，这部分跟其他传统的神经网络模型都是一样的。
+
+## 为什么要采用Self-Attention
+
+从上面的分析我们可以看到，Transformer和传统基于RNN的带attention的Encoder-Decoder模型最大的区别其实就是采用位置编码+多头注意力（Self-Attention）+FFN的方式替代了原来的RNN或LSTM等序列模型。其中位置编码是为了注入位置信息（这个算是补偿没有位置信息的短板，算不上优势），FFN是为了进一步增加非线性和学习能力（我的理解是对Self-Attention学习能力的加强），最主要的改变还是多头注意力，或者说Self-Attention的结构。那么为什么要采用这种网络结构来替代RNN呢？
+
+作者在论文中给出了这种结构的3个优势：
+
+1. 每一层的计算复杂度更小。
+2. 总体的计算并行度更大。
+3. 网络中长距离依赖间的路径长度更小。
+
+其中第二个优势可以通过测量必须要依顺序执行的操作数来证明，而第三点的其中一个重要的影响因素是**前向和后向信号在网络中必须要经过的路径长度**，如果输入和输出序列任意位置间的上述路径长度越短则可以越容易地学习到长距离依赖。具体的对比结果如下图所示：
+
+![img](/img/in-post/ml/transformer/table1.png)
+
+由于序列长度n一般小于表示向量的维度d，因此self-attention的**每层计算复杂度**通常小于RNN和CNN结构。上图中最后一行的restricted是指self-attention被限制到只考虑以输出位置对应输入位置为中心周围大小为r的邻域节点。这种做法会增大最大路径距离到O(n/r)，不过每一层的计算复杂度会有所减少。
+
+上述三个优势的**前两个是从计算效率的提高上说的，而最后一个则是针对模型效果**。每一层的计算复杂度更低，并行效率更高意味着可以堆更深的网络，也能更快地得到模型效果评估结果。不过在实际应用中，模型的大小也很重要，参数量过大会对模型的存储和inference的效率提出更高要求。Bert的base model参数量有110M，large model有330M，还是很惊人的，可见深度学习对算力的要求越来越高，大厂滚雪球式的技术优势将来可能越来越大。
+
+# Transformer代码分析
+未完待续
