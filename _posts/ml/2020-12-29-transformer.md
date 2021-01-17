@@ -55,7 +55,7 @@ Attention就是大名鼎鼎的注意力机制。注意力机制和我们平时�
 
 假设我们一共应用h组线性变换，那就可以得到h个结果矩阵，将它们拼接起来再做一次线性变换，即可得到最后的结果：
 ![img](/img/in-post/ml/transformer/formula2.png)
-其中$ W^{Q}_{i} \in \mathbb{d_model\times{d_k}} $ ，也就是我们前文提到的Wq，Wk和Wv也是类似，而$ W^{O} \in  \mathbb{hd_v \times{d_model}} $ 。为了加快计算速度，可以并行计算每个head，并且减少每个head的维度。在论文中，作者设置h=8，并且$ d_k=dv=d_{model}/h=64 $ 。
+其中 $ W^{Q}_{i} \in \mathbb{R}^{d_{model}\times{d_k}} $ ，也就是我们前文提到的Wq，Wk和Wv也是类似，而 $ W^{O} \in \mathbb{R}^{hd_v \times{d_{model}}} $ 。为了加快计算速度，可以并行计算每个head，并且减少每个head的维度。在论文中，作者设置h=8，并且$ d_k=dv=d_{model}/h=64 $ 。
 
 ### 逐位置的前馈神经网络(FFN)
 FFN其实就是一个简单的二层网络，其中第一层的激活函数为ReLU。对于输入序列中每个位置上的向量x：
