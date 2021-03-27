@@ -159,5 +159,7 @@ S1：publisher=P1，性别男，年龄18-23；S2：publisher=P2，性别男，�
 
 ## Reference
 [1] Display Advertising with Real-Time Bidding (RTB) and Behavioural Targeting by Jun Wang, Weinan Zhang and Shuai Yuan. ArXiv 2016.
+
 [2] 在文章中也叫bid request，个人认为应该是指请求别人（即广告主）进行竞价，其实直接理解为impression（曝光）可能更容易理解一些。
+
 [3] Cui, Y., Zhang, R., Li, W., and Mao, J. (2011). Bid landscape forecasting in online ad exchange marketplace. In Proceedings of the 17th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, pages 265–273. ACM.
